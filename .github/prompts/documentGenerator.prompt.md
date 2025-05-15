@@ -38,6 +38,8 @@ This is for a NextJS 15 project with TypeScript that uses:
 
 ```typescript
 /**
+ * Componente `[Nombre del Componente]`
+ *
  * Componente que muestra [descripción de la funcionalidad principal].
  *
  * @component
