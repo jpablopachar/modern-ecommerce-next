@@ -14,11 +14,8 @@ import { socialLink } from './SocialMediaData'
  * Interfaz para las propiedades del componente SocialMedia
  */
 interface SocialMediaProps {
-  /** Clase CSS adicional para el contenedor principal */
   className?: string
-  /** Clase CSS adicional para los iconos */
   iconClassName?: string
-  /** Clase CSS adicional para los tooltips */
   tooltipClassName?: string
 }
 
