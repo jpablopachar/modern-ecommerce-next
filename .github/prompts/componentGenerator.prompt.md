@@ -63,7 +63,7 @@ This follows the pattern shown in `FooterTop.tsx`, where internal components are
 
 When documenting interfaces:
 
-- Add a JSDoc comment that includes a general description followed by property-specific documentation
+- Add a JSDoc comment that includes a general description and property-specific documentation
 - Document each property with `@property` tags, including type information
 - Mark optional properties with square brackets around the name
 - Use a more compact format without nested indentation for property descriptions
@@ -79,6 +79,35 @@ interface ComponentNameProps {
   propertyName: Type
   optionalProperty?: AnotherType
 }
+```
+
+## Component Documentation Guidelines
+
+When documenting components:
+
+- Add a comprehensive JSDoc comment that describes the component's purpose and functionality
+- Document all props as parameters with `@param` tags, including their types and descriptions
+- Even if props are already defined in an interface, repeat them in the component documentation
+- Include a `@returns` tag describing what the component renders
+- Add an `@example` section showing how to use the component
+- Follow this pattern:
+
+```tsx
+/**
+ * Componente `ComponentName`
+ *
+ * Descripción detallada del componente explicando su propósito y funcionalidad.
+ *
+ * @param {ComponentNameProps} props - Propiedades del componente
+ * @param {Type} props.propertyName - Descripción de la propiedad
+ * @param {AnotherType} [props.optionalProperty] - Descripción de la propiedad opcional
+ * @returns {JSX.Element} Descripción de lo que el componente renderiza
+ *
+ * @example
+ * <ComponentName propertyName="valor" optionalProperty="valorOpcional">
+ *   Contenido hijo
+ * </ComponentName>
+ */
 ```
 
 ## Example of Component with Internal Subcomponent
@@ -131,6 +160,8 @@ interface ProfileHeaderProps {
  * Este componente se utiliza internamente dentro de ProfileCard.
  *
  * @param {ProfileHeaderProps} props - Propiedades del componente
+ * @param {string} props.name - Nombre a mostrar en el encabezado
+ * @param {string} props.title - Título o cargo profesional
  * @returns {JSX.Element} Encabezado de la tarjeta de perfil
  */
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({ name, title }) => {
@@ -145,9 +176,13 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ name, title }) => {
 /**
  * Componente `ProfileCard`
  *
- * Muestra una tarjeta de perfil profesional con encabezado y cuerpo.
+ * Muestra una tarjeta de perfil profesional con encabezado y cuerpo
+ * que presenta información sobre una persona.
  *
  * @returns {JSX.Element} Tarjeta de perfil completa
+ *
+ * @example
+ * <ProfileCard />
  */
 const ProfileCard: React.FC = () => {
   return (
@@ -161,6 +196,45 @@ const ProfileCard: React.FC = () => {
 }
 
 export default ProfileCard
+```
+
+## Example Based on Container.tsx
+
+```tsx
+/**
+ * Propiedades para el componente Container.
+ * @property {ReactNode} children - Contenido que será envuelto por el contenedor.
+ * @property {string} [className] - Clases CSS adicionales para personalizar el contenedor.
+ */
+interface ContainerProps {
+  children: ReactNode
+  className?: string
+}
+
+/**
+ * Componente `Container`
+ *
+ * Proporciona un contenedor responsivo con ancho máximo y padding horizontal
+ * consistente. Centraliza el contenido en la página y permite agregar clases
+ * CSS adicionales.
+ *
+ * @param {ContainerProps} props - Propiedades del componente
+ * @param {ReactNode} props.children - Contenido que será envuelto por el contenedor
+ * @param {string} [props.className] - Clases CSS adicionales para personalizar el contenedor
+ * @returns {JSX.Element} Contenedor con el contenido proporcionado
+ *
+ * @example
+ * <Container className="bg-gray-100">
+ *   <h1 className="text-xl">Hola Mundo</h1>
+ * </Container>
+ */
+const Container: React.FC<ContainerProps> = ({ children, className }) => {
+  return (
+    <div className={cn('max-w-screen-xl mx-auto px-4', className)}>
+      {children}
+    </div>
+  )
+}
 ```
 
 ## Data Separation Guidelines
@@ -216,9 +290,13 @@ import { features } from './FeatureListData'
 /**
  * Componente `FeatureList`
  *
- * Muestra una lista de características destacadas del servicio.
+ * Muestra una lista de características destacadas del servicio organizadas
+ * en una cuadrícula responsiva.
  *
- * @returns {JSX.Element} Lista de características renderizada.
+ * @returns {JSX.Element} Lista de características renderizada
+ *
+ * @example
+ * <FeatureList />
  */
 const FeatureList: React.FC = () => {
   return (
@@ -299,7 +377,17 @@ interface ContactItemProps {
  * título y contenido.
  *
  * @param {ContactItemProps} props - Propiedades del componente
+ * @param {React.ReactNode} props.icon - Icono a mostrar
+ * @param {string} props.title - Título del item de contacto
+ * @param {string} props.content - Contenido o subtítulo del item
  * @returns {JSX.Element} Item de contacto individual
+ *
+ * @example
+ * <ContactItem
+ *   icon={<PhoneIcon />}
+ *   title="Teléfono"
+ *   content="+34 123 456 789"
+ * />
  */
 const ContactItem: React.FC<ContactItemProps> = ({ icon, title, content }) => {
   return (
@@ -319,7 +407,10 @@ const ContactItem: React.FC<ContactItemProps> = ({ icon, title, content }) => {
  * Muestra información de contacto en la parte superior del pie de página,
  * organizada en una cuadrícula responsive.
  *
- * @returns {JSX.Element} Sección superior del pie de página con items de contacto.
+ * @returns {JSX.Element} Sección superior del pie de página con items de contacto
+ *
+ * @example
+ * <FooterTop />
  */
 const FooterTop: React.FC = () => {
   return (
@@ -366,7 +457,7 @@ export default ProductCard
  * Muestra una tarjeta de producto destacado con título, descripción y botón
  * para añadir al carrito de compras.
  *
- * @returns {JSX.Element} Elemento JSX que representa una tarjeta de producto.
+ * @returns {JSX.Element} Elemento JSX que representa una tarjeta de producto
  *
  * @example
  * <ProductCard />
@@ -416,15 +507,26 @@ interface AddToCartButtonProps {
 
 /**
  * Componente `AddToCartButton`
- * 
+ *
  * Muestra un botón para agregar productos al carrito o controles de cantidad
  * si el producto ya está en el carrito. Incluye información de subtotal cuando
  * hay productos agregados.
- * 
+ *
  * @param {AddToCartButtonProps} props - Propiedades del componente
+ * @param {Product} props.product - El producto que se agregará al carrito
+ * @param {string} [props.className] - Clase CSS opcional para personalizar el estilo del botón
  * @returns {JSX.Element | null} Botón o controles de cantidad del producto
+ *
+ * @example
+ * <AddToCartButton
+ *   product={productData}
+ *   className="w-full bg-primary"
+ * />
  */
-const AddToCartButton: React.FC<AddToCartButtonProps> = ({ product, className }) => {
+const AddToCartButton: React.FC<AddToCartButtonProps> = ({
+  product,
+  className,
+}) => {
   // Component implementation
 }
 
@@ -457,11 +559,12 @@ When enhancing a React component:
 
    - Use Spanish for all documentation
    - Include a comprehensive description of the component functionality
-   - Document all props with `@param` tags for component functions
-   - Use `@property` tags for interface properties in a compact format
-   - Mark optional properties with square brackets around the property name
+   - Document all props twice:
+     - Once in the interface with `@property` tags
+     - Again in the component documentation with `@param` tags for each prop
+   - Mark optional properties with square brackets around the name
    - Specify return type with `@returns`
-   - Add usage examples when appropriate
+   - Add usage examples with `@example` for all components
    - Document any side effects or important behaviors
    - For internal components, mention their relationship with the main component
 
