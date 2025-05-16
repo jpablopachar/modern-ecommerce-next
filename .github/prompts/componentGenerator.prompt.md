@@ -59,6 +59,24 @@ The recommended structure for components with internal subcomponents is:
 
 This follows the pattern shown in `FooterTop.tsx`, where internal components are defined before the main component that uses them.
 
+## Interface Documentation Guidelines
+
+When documenting interfaces:
+
+- Add a JSDoc comment only for the interface itself, not for individual properties
+- The comment should briefly explain what the interface represents
+- Follow this pattern:
+
+```tsx
+/**
+ * Propiedades para el componente ComponentName.
+ */
+interface ComponentNameProps {
+  name: string
+  title: string
+}
+```
+
 ## Example of Component with Internal Subcomponent
 
 ### Input:
@@ -382,77 +400,80 @@ When enhancing a React component:
 
 1. **Component Structure**:
 
-   - Place interfaces for internal components first
-   - Then define the internal components themselves
-   - Follow with interfaces for the main component
-   - Then implement the main component
-   - Position the export statement at the end
-   - Document each component and interface with JSDoc in Spanish
+- Place interfaces for internal components first
+- Then define the internal components themselves
+- Follow with interfaces for the main component
+- Then implement the main component
+- Position the export statement at the end
+- Document each component and interface with JSDoc in Spanish
 
 2. **Props Definition**:
 
-   - Create TypeScript interfaces for all props (internal and main components)
-   - Use descriptive names and add proper types
-   - Specify optional vs. required props
-   - Place interface definitions before their respective component declarations
+- Create TypeScript interfaces for all props (internal and main components)
+- Use descriptive names and add proper types
+- Specify optional vs. required props
+- Place interface definitions before their respective component declarations
+- Document only the interface itself, not individual properties
 
 3. **JSDoc Documentation**:
 
-   - Use Spanish for all documentation
-   - Include a comprehensive description of the component functionality
-   - Document all props with `@param` tags
-   - Specify return type with `@returns`
-   - Add usage examples when appropriate
-   - Document any side effects or important behaviors
-   - For internal components, mention their relationship with the main component
+- Use Spanish for all documentation
+- Include a comprehensive description of the component functionality
+- Document all props with `@param` tags
+- Specify return type with `@returns`
+- Add usage examples when appropriate
+- Document any side effects or important behaviors
+- For internal components, mention their relationship with the main component
+- For interfaces, only add a brief description comment for the interface itself
 
 4. **Event Handler Documentation**:
 
    - Document all **existing** event handler functions with JSDoc comments in Spanish
-   - Do not add new event handlers or functions that are not in the original component
-   - Describe the purpose of the function and what it accomplishes
-   - Include `@param` tags for all parameters with their types and descriptions
-   - Specify return type with `@returns` (typically `void` for event handlers)
-   - Explain any side effects or interactions with other parts of the application
-   - Follow the pattern shown in the `category-selector.tsx` example:
-     ```tsx
-     /**
-      * Maneja el evento de pulsación de teclas en el campo de entrada.
-      *
-      * Si el usuario presiona la tecla 'Enter', busca una categoría cuyo título
-      * incluya el valor actual del campo de entrada (ignorando mayúsculas/minúsculas).
-      * Si encuentra una categoría válida, actualiza el valor seleccionado, cierra el selector
-      * y navega a la página de la categoría seleccionada.
-      *
-      * @param event El evento de teclado generado por el campo de entrada.
-      */
-     const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
-       // Implementation
-     }
-     ```
+
+- Do not add new event handlers or functions that are not in the original component
+- Describe the purpose of the function and what it accomplishes
+- Include `@param` tags for all parameters with their types and descriptions
+- Specify return type with `@returns` (typically `void` for event handlers)
+- Explain any side effects or interactions with other parts of the application
+- Follow the pattern shown in the `category-selector.tsx` example:
+  ```tsx
+  /**
+   * Maneja el evento de pulsación de teclas en el campo de entrada.
+   *
+   * Si el usuario presiona la tecla 'Enter', busca una categoría cuyo título
+   * incluya el valor actual del campo de entrada (ignorando mayúsculas/minúsculas).
+   * Si encuentra una categoría válida, actualiza el valor seleccionado, cierra el selector
+   * y navega a la página de la categoría seleccionada.
+   *
+   * @param event El evento de teclado generado por el campo de entrada.
+   */
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
+    // Implementation
+  }
+  ```
 
 5. **Data Separation**:
 
-   - Identify and extract static data like arrays, objects, configurations, etc.
-   - Create a new file named `ComponentNameData.tsx` in the same directory
-   - Define appropriate TypeScript interfaces for all data structures
-   - Document all interfaces and data with JSDoc comments in Spanish
-   - Export the data with proper typing
-   - Import the data in the main component file
-   - Translate any text content in the data to Spanish when appropriate
-   - Only extract truly static data – leave dynamic state or computed values in the main component
+- Identify and extract static data like arrays, objects, configurations, etc.
+- Create a new file named `ComponentNameData.tsx` in the same directory
+- Define appropriate TypeScript interfaces for all data structures
+- Document interfaces with a brief JSDoc comment for the interface itself
+- Export the data with proper typing
+- Import the data in the main component file
+- Translate any text content in the data to Spanish when appropriate
+- Only extract truly static data – leave dynamic state or computed values in the main component
 
 6. **Code Formatting**:
 
-   - Apply consistent indentation (2 spaces)
-   - Use single quotes for strings
-   - Apply appropriate spacing between elements
-   - Follow ESLint rules for line length, spacing, etc.
+- Apply consistent indentation (2 spaces)
+- Use single quotes for strings
+- Apply appropriate spacing between elements
+- Follow ESLint rules for line length, spacing, etc.
 
 7. **Translation Guidelines**:
 
-   - Translate all user-facing text inside JSX tags to Spanish
-   - Translate user-facing text in data files to Spanish
-   - Maintain the meaning and tone of the original content
-   - Preserve any technical terms that should not be translated
-   - Do not translate props names, variables, or function names
+- Translate all user-facing text inside JSX tags to Spanish
+- Translate user-facing text in data files to Spanish
+- Maintain the meaning and tone of the original content
+- Preserve any technical terms that should not be translated
+- Do not translate props names, variables, or function names
