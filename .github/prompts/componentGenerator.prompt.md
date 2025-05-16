@@ -63,17 +63,21 @@ This follows the pattern shown in `FooterTop.tsx`, where internal components are
 
 When documenting interfaces:
 
-- Add a JSDoc comment only for the interface itself, not for individual properties
-- The comment should briefly explain what the interface represents
+- Add a JSDoc comment that includes a general description followed by property-specific documentation
+- Document each property with `@property` tags, including type information
+- Mark optional properties with square brackets around the name
+- Use a more compact format without nested indentation for property descriptions
 - Follow this pattern:
 
 ```tsx
 /**
  * Propiedades para el componente ComponentName.
+ * @property {Type} propertyName - Descripción de la propiedad.
+ * @property {AnotherType} [optionalProperty] - Descripción de la propiedad opcional.
  */
 interface ComponentNameProps {
-  name: string
-  title: string
+  propertyName: Type
+  optionalProperty?: AnotherType
 }
 ```
 
@@ -112,6 +116,8 @@ export default ProfileCard
 
 /**
  * Propiedades para el componente ProfileHeader.
+ * @property {string} name - Nombre a mostrar en el encabezado.
+ * @property {string} title - Título o cargo profesional.
  */
 interface ProfileHeaderProps {
   name: string
@@ -125,8 +131,6 @@ interface ProfileHeaderProps {
  * Este componente se utiliza internamente dentro de ProfileCard.
  *
  * @param {ProfileHeaderProps} props - Propiedades del componente
- * @param {string} props.name - Nombre a mostrar en el encabezado
- * @param {string} props.title - Título o cargo profesional
  * @returns {JSX.Element} Encabezado de la tarjeta de perfil
  */
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({ name, title }) => {
@@ -237,6 +241,9 @@ FeatureListData.tsx:
 ```tsx
 /**
  * Interfaz para definir la estructura de una característica.
+ * @property {number} id - Identificador único de la característica.
+ * @property {string} title - Título de la característica.
+ * @property {string} description - Descripción detallada de la característica.
  */
 export interface Feature {
   id: number
@@ -275,6 +282,9 @@ import { contactItems } from './FooterTopData'
 
 /**
  * Propiedades para el componente ContactItem.
+ * @property {React.ReactNode} icon - Icono a mostrar para el item de contacto.
+ * @property {string} title - Título del item de contacto.
+ * @property {string} content - Contenido o subtítulo del item de contacto.
  */
 interface ContactItemProps {
   icon: React.ReactNode
@@ -289,9 +299,6 @@ interface ContactItemProps {
  * título y contenido.
  *
  * @param {ContactItemProps} props - Propiedades del componente
- * @param {React.ReactNode} props.icon - Icono a mostrar
- * @param {string} props.title - Título del item de contacto
- * @param {string} props.content - Contenido o subtítulo del item
  * @returns {JSX.Element} Item de contacto individual
  */
 const ContactItem: React.FC<ContactItemProps> = ({ icon, title, content }) => {
@@ -359,8 +366,6 @@ export default ProductCard
  * Muestra una tarjeta de producto destacado con título, descripción y botón
  * para añadir al carrito de compras.
  *
- * @component
- *
  * @returns {JSX.Element} Elemento JSX que representa una tarjeta de producto.
  *
  * @example
@@ -394,86 +399,119 @@ const ProductCard: React.FC = () => {
 export default ProductCard
 ```
 
+## Example Based on AddToCartButton Pattern
+
+```tsx
+'use client'
+
+/**
+ * Propiedades para el componente AddToCartButton.
+ * @property {Product} product - El producto que se agregará al carrito.
+ * @property {string} [className] - Clase CSS opcional para personalizar el estilo del botón.
+ */
+interface AddToCartButtonProps {
+  product: Product
+  className?: string
+}
+
+/**
+ * Componente `AddToCartButton`
+ * 
+ * Muestra un botón para agregar productos al carrito o controles de cantidad
+ * si el producto ya está en el carrito. Incluye información de subtotal cuando
+ * hay productos agregados.
+ * 
+ * @param {AddToCartButtonProps} props - Propiedades del componente
+ * @returns {JSX.Element | null} Botón o controles de cantidad del producto
+ */
+const AddToCartButton: React.FC<AddToCartButtonProps> = ({ product, className }) => {
+  // Component implementation
+}
+
+export default AddToCartButton
+```
+
 ## Instructions for Component Enhancement
 
 When enhancing a React component:
 
 1. **Component Structure**:
 
-- Place interfaces for internal components first
-- Then define the internal components themselves
-- Follow with interfaces for the main component
-- Then implement the main component
-- Position the export statement at the end
-- Document each component and interface with JSDoc in Spanish
+   - Place interfaces for internal components first
+   - Then define the internal components themselves
+   - Follow with interfaces for the main component
+   - Then implement the main component
+   - Position the export statement at the end
+   - Document each component and interface with JSDoc in Spanish
+   - Include 'use client' directive for client-side components
 
 2. **Props Definition**:
 
-- Create TypeScript interfaces for all props (internal and main components)
-- Use descriptive names and add proper types
-- Specify optional vs. required props
-- Place interface definitions before their respective component declarations
-- Document only the interface itself, not individual properties
+   - Create TypeScript interfaces for all props (internal and main components)
+   - Use descriptive names and add proper types
+   - Specify optional vs. required props
+   - Place interface definitions before their respective component declarations
+   - Document interfaces with proper JSDoc including property descriptions
 
 3. **JSDoc Documentation**:
 
-- Use Spanish for all documentation
-- Include a comprehensive description of the component functionality
-- Document all props with `@param` tags
-- Specify return type with `@returns`
-- Add usage examples when appropriate
-- Document any side effects or important behaviors
-- For internal components, mention their relationship with the main component
-- For interfaces, only add a brief description comment for the interface itself
+   - Use Spanish for all documentation
+   - Include a comprehensive description of the component functionality
+   - Document all props with `@param` tags for component functions
+   - Use `@property` tags for interface properties in a compact format
+   - Mark optional properties with square brackets around the property name
+   - Specify return type with `@returns`
+   - Add usage examples when appropriate
+   - Document any side effects or important behaviors
+   - For internal components, mention their relationship with the main component
 
 4. **Event Handler Documentation**:
 
    - Document all **existing** event handler functions with JSDoc comments in Spanish
-
-- Do not add new event handlers or functions that are not in the original component
-- Describe the purpose of the function and what it accomplishes
-- Include `@param` tags for all parameters with their types and descriptions
-- Specify return type with `@returns` (typically `void` for event handlers)
-- Explain any side effects or interactions with other parts of the application
-- Follow the pattern shown in the `category-selector.tsx` example:
-  ```tsx
-  /**
-   * Maneja el evento de pulsación de teclas en el campo de entrada.
-   *
-   * Si el usuario presiona la tecla 'Enter', busca una categoría cuyo título
-   * incluya el valor actual del campo de entrada (ignorando mayúsculas/minúsculas).
-   * Si encuentra una categoría válida, actualiza el valor seleccionado, cierra el selector
-   * y navega a la página de la categoría seleccionada.
-   *
-   * @param event El evento de teclado generado por el campo de entrada.
-   */
-  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
-    // Implementation
-  }
-  ```
+   - Do not add new event handlers or functions that are not in the original component
+   - Describe the purpose of the function and what it accomplishes
+   - Include `@param` tags for all parameters with their types and descriptions
+   - Specify return type with `@returns` (typically `void` for event handlers)
+   - Explain any side effects or interactions with other parts of the application
+   - Follow the pattern shown in the `category-selector.tsx` example:
+     ```tsx
+     /**
+      * Maneja el evento de pulsación de teclas en el campo de entrada.
+      *
+      * Si el usuario presiona la tecla 'Enter', busca una categoría cuyo título
+      * incluya el valor actual del campo de entrada (ignorando mayúsculas/minúsculas).
+      * Si encuentra una categoría válida, actualiza el valor seleccionado, cierra el selector
+      * y navega a la página de la categoría seleccionada.
+      *
+      * @param event El evento de teclado generado por el campo de entrada.
+      */
+     const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
+       // Implementation
+     }
+     ```
 
 5. **Data Separation**:
 
-- Identify and extract static data like arrays, objects, configurations, etc.
-- Create a new file named `ComponentNameData.tsx` in the same directory
-- Define appropriate TypeScript interfaces for all data structures
-- Document interfaces with a brief JSDoc comment for the interface itself
-- Export the data with proper typing
-- Import the data in the main component file
-- Translate any text content in the data to Spanish when appropriate
-- Only extract truly static data – leave dynamic state or computed values in the main component
+   - Identify and extract static data like arrays, objects, configurations, etc.
+   - Create a new file named `ComponentNameData.tsx` in the same directory
+   - Define appropriate TypeScript interfaces for all data structures
+   - Document interfaces with JSDoc comments including property descriptions
+   - Export the data with proper typing
+   - Import the data in the main component file
+   - Translate any text content in the data to Spanish when appropriate
+   - Only extract truly static data – leave dynamic state or computed values in the main component
 
 6. **Code Formatting**:
 
-- Apply consistent indentation (2 spaces)
-- Use single quotes for strings
-- Apply appropriate spacing between elements
-- Follow ESLint rules for line length, spacing, etc.
+   - Apply consistent indentation (2 spaces)
+   - Use single quotes for strings
+   - Apply appropriate spacing between elements
+   - Follow ESLint rules for line length, spacing, etc.
 
 7. **Translation Guidelines**:
 
-- Translate all user-facing text inside JSX tags to Spanish
-- Translate user-facing text in data files to Spanish
-- Maintain the meaning and tone of the original content
-- Preserve any technical terms that should not be translated
-- Do not translate props names, variables, or function names
+   - Translate all user-facing text inside JSX tags to Spanish
+   - Translate user-facing text in data files to Spanish
+   - Maintain the meaning and tone of the original content
+   - Preserve any technical terms that should not be translated
+   - Do not translate props names, variables, or function names
