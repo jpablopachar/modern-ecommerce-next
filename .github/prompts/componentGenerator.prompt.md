@@ -2,7 +2,7 @@
 
 ## Meta
 
-This prompt enhances React components by adding proper TypeScript props, comprehensive Spanish JSDoc documentation, and applying ESLint formatting rules. It also translates any English content within JSX tags to Spanish when needed. Additionally, it separates component data into dedicated Data files when appropriate.
+This prompt enhances React components by adding proper TypeScript props, comprehensive Spanish JSDoc documentation, and applying ESLint formatting rules. It also translates any English content within JSX tags to Spanish when needed. Additionally, it separates component data into dedicated Data files when appropriate and properly structures internal components.
 
 ## Response Format
 
@@ -15,6 +15,7 @@ The enhanced component should:
 - Maintain the component's original functionality
 - Use proper React patterns according to Next.js 15 best practices
 - When applicable, extract component data into a separate ComponentNameData.tsx file
+- Position internal component definitions and their interfaces before the main component
 
 For each component, provide:
 
@@ -44,6 +45,99 @@ This enhancement tool is for a Next.js 15 project with TypeScript that uses:
 - ESLint for code formatting
 - JSDoc documentation in Spanish
 - Various UI libraries and styled components
+
+## Component Structure Guidelines
+
+The recommended structure for components with internal subcomponents is:
+
+1. Import statements
+2. Interface definitions for internal component props
+3. Internal component implementations with JSDoc documentation
+4. Interface definitions for main component props (if any)
+5. Main component implementation with JSDoc documentation
+6. Export statement
+
+This follows the pattern shown in `FooterTop.tsx`, where internal components are defined before the main component that uses them.
+
+## Example of Component with Internal Subcomponent
+
+### Input:
+
+```tsx
+const ProfileCard = () => {
+  const ProfileHeader = ({ name, title }) => {
+    return (
+      <div className="header">
+        <h2>{name}</h2>
+        <p>{title}</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="profile-card">
+      <ProfileHeader name="John Doe" title="Software Engineer" />
+      <div className="body">
+        <p>Experienced developer with 5 years of experience.</p>
+      </div>
+    </div>
+  )
+}
+
+export default ProfileCard
+```
+
+### Output:
+
+```tsx
+/**
+ * Propiedades para el componente ProfileHeader.
+ */
+interface ProfileHeaderProps {
+  name: string
+  title: string
+}
+
+/**
+ * Componente `ProfileHeader`
+ *
+ * Muestra el encabezado de una tarjeta de perfil con nombre y título profesional.
+ * Este componente se utiliza internamente dentro de ProfileCard.
+ *
+ * @param {ProfileHeaderProps} props - Propiedades del componente
+ * @param {string} props.name - Nombre a mostrar en el encabezado
+ * @param {string} props.title - Título o cargo profesional
+ * @returns {JSX.Element} Encabezado de la tarjeta de perfil
+ */
+const ProfileHeader: React.FC<ProfileHeaderProps> = ({ name, title }) => {
+  return (
+    <div className="header">
+      <h2>{name}</h2>
+      <p>{title}</p>
+    </div>
+  )
+}
+
+/**
+ * Componente `ProfileCard`
+ *
+ * Muestra una tarjeta de perfil profesional con encabezado y cuerpo.
+ *
+ * @returns {JSX.Element} Tarjeta de perfil completa
+ */
+const ProfileCard: React.FC = () => {
+  return (
+    <div className="profile-card">
+      <ProfileHeader name="John Doe" title="Ingeniero de Software" />
+      <div className="body">
+        <p>Desarrollador experimentado con 5 años de experiencia.</p>
+      </div>
+    </div>
+  )
+}
+
+export default ProfileCard
+```
 
 ## Data Separation Guidelines
 
@@ -150,6 +244,70 @@ export const features: Feature[] = [
 ]
 ```
 
+## Example Based on FooterTop.tsx Pattern
+
+```tsx
+import { contactItems } from './FooterTopData'
+
+/**
+ * Propiedades para el componente ContactItem.
+ */
+interface ContactItemProps {
+  icon: React.ReactNode
+  title: string
+  content: string
+}
+
+/**
+ * Componente `ContactItem`
+ *
+ * Muestra un elemento individual de información de contacto con icono,
+ * título y contenido.
+ *
+ * @param {ContactItemProps} props - Propiedades del componente
+ * @param {React.ReactNode} props.icon - Icono a mostrar
+ * @param {string} props.title - Título del item de contacto
+ * @param {string} props.content - Contenido o subtítulo del item
+ * @returns {JSX.Element} Item de contacto individual
+ */
+const ContactItem: React.FC<ContactItemProps> = ({ icon, title, content }) => {
+  return (
+    <div className="flex items-center gap-3">
+      {icon}
+      <div>
+        <h3>{title}</h3>
+        <p>{content}</p>
+      </div>
+    </div>
+  )
+}
+
+/**
+ * Componente `FooterTop`
+ *
+ * Muestra información de contacto en la parte superior del pie de página,
+ * organizada en una cuadrícula responsive.
+ *
+ * @returns {JSX.Element} Sección superior del pie de página con items de contacto.
+ */
+const FooterTop: React.FC = () => {
+  return (
+    <div className="grid grid-cols-4 gap-8">
+      {contactItems.map((item, index) => (
+        <ContactItem
+          key={index}
+          icon={item.icon}
+          title={item.title}
+          content={item.subtitle}
+        />
+      ))}
+    </div>
+  )
+}
+
+export default FooterTop
+```
+
 ## Example Input
 
 ```tsx
@@ -212,106 +370,27 @@ const ProductCard: React.FC = () => {
 export default ProductCard
 ```
 
-## Example with Data Separation
-
-### Input Component with Data
-
-```tsx
-const TeamMembers = () => {
-  const team = [
-    { id: 1, name: 'John Doe', role: 'CEO', avatar: '/avatars/john.png' },
-    { id: 2, name: 'Jane Smith', role: 'CTO', avatar: '/avatars/jane.png' },
-    {
-      id: 3,
-      name: 'Bob Johnson',
-      role: 'Designer',
-      avatar: '/avatars/bob.png',
-    },
-  ]
-
-  return (
-    <div className="team-grid">
-      {team.map((member) => (
-        <div key={member.id} className="team-member">
-          <img src={member.avatar} alt={member.name} />
-          <h4>{member.name}</h4>
-          <p>{member.role}</p>
-        </div>
-      ))}
-    </div>
-  )
-}
-
-export default TeamMembers
-```
-
-### Output Components
-
-TeamMembers.tsx:
-
-```tsx
-import { team } from './TeamMembersData'
-
-/**
- * Componente `TeamMembers`
- *
- * Muestra una cuadrícula con los miembros del equipo, incluyendo
- * su avatar, nombre y cargo en la empresa.
- *
- * @returns {JSX.Element} Cuadrícula con los miembros del equipo.
- */
-const TeamMembers: React.FC = () => {
-  return (
-    <div className="team-grid">
-      {team.map((member) => (
-        <div key={member.id} className="team-member">
-          <img src={member.avatar} alt={member.name} />
-          <h4>{member.name}</h4>
-          <p>{member.role}</p>
-        </div>
-      ))}
-    </div>
-  )
-}
-
-export default TeamMembers
-```
-
-TeamMembersData.tsx:
-
-```tsx
-/**
- * Interfaz que define la estructura de un miembro del equipo.
- */
-export interface TeamMember {
-  id: number
-  name: string
-  role: string
-  avatar: string
-}
-
-/**
- * Datos de los miembros del equipo.
- */
-export const team: TeamMember[] = [
-  { id: 1, name: 'John Doe', role: 'CEO', avatar: '/avatars/john.png' },
-  { id: 2, name: 'Jane Smith', role: 'CTO', avatar: '/avatars/jane.png' },
-  { id: 3, name: 'Bob Johnson', role: 'Diseñador', avatar: '/avatars/bob.png' },
-]
-```
-
 ## Instructions for Component Enhancement
 
 When enhancing a React component:
 
-1. **Props Definition**:
+1. **Component Structure**:
 
-   - Create TypeScript interfaces for all props
+   - Place interfaces for internal components first
+   - Then define the internal components themselves
+   - Follow with interfaces for the main component
+   - Then implement the main component
+   - Position the export statement at the end
+   - Document each component and interface with JSDoc in Spanish
+
+2. **Props Definition**:
+
+   - Create TypeScript interfaces for all props (internal and main components)
    - Use descriptive names and add proper types
    - Specify optional vs. required props
-   - Place interface above the component declaration
+   - Place interface definitions before their respective component declarations
 
-2. **JSDoc Documentation**:
+3. **JSDoc Documentation**:
 
    - Use Spanish for all documentation
    - Include a comprehensive description of the component functionality
@@ -319,8 +398,9 @@ When enhancing a React component:
    - Specify return type with `@returns`
    - Add usage examples when appropriate
    - Document any side effects or important behaviors
+   - For internal components, mention their relationship with the main component
 
-3. **Event Handler Documentation**:
+4. **Event Handler Documentation**:
 
    - Document all **existing** event handler functions with JSDoc comments in Spanish
    - Do not add new event handlers or functions that are not in the original component
@@ -345,7 +425,7 @@ When enhancing a React component:
      }
      ```
 
-4. **Data Separation**:
+5. **Data Separation**:
 
    - Identify and extract static data like arrays, objects, configurations, etc.
    - Create a new file named `ComponentNameData.tsx` in the same directory
@@ -356,24 +436,17 @@ When enhancing a React component:
    - Translate any text content in the data to Spanish when appropriate
    - Only extract truly static data – leave dynamic state or computed values in the main component
 
-5. **Code Formatting**:
+6. **Code Formatting**:
 
    - Apply consistent indentation (2 spaces)
    - Use single quotes for strings
    - Apply appropriate spacing between elements
    - Follow ESLint rules for line length, spacing, etc.
 
-6. **Translation Guidelines**:
+7. **Translation Guidelines**:
 
    - Translate all user-facing text inside JSX tags to Spanish
    - Translate user-facing text in data files to Spanish
    - Maintain the meaning and tone of the original content
    - Preserve any technical terms that should not be translated
    - Do not translate props names, variables, or function names
-
-7. **Component Structure**:
-   - Maintain separation of concerns
-   - Keep the component's original functionality
-   - Preserve existing styling and className attributes
-   - Follow React best practices for functional components
-   - Never add new functionality not present in the original component
