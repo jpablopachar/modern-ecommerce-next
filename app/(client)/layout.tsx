@@ -6,11 +6,10 @@ import { VisualEditing } from 'next-sanity'
 import { Toaster } from 'react-hot-toast'
 
 import DisableDraftMode from '@/components/DisableDraftMode'
-import ChatIcon from '@/components/new/ChatIcon'
-import { SanityLive } from '@/sanity/lib/live'
-
 import Footer from '@/components/Footer'
 import Header from '@/components/Header'
+import ChatIcon from '@/components/new/ChatIcon'
+import { SanityLive } from '@/sanity/lib/live'
 
 export const metadata: Metadata = {
   title: 'Ecommerce App for Shoppers',
