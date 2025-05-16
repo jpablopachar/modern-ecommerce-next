@@ -2,7 +2,7 @@
 
 ## Meta
 
-This prompt enhances React components by adding proper TypeScript props, comprehensive Spanish JSDoc documentation, and applying ESLint formatting rules. It also translates any English content within JSX tags to Spanish when needed.
+This prompt enhances React components by adding proper TypeScript props, comprehensive Spanish JSDoc documentation, and applying ESLint formatting rules. It also translates any English content within JSX tags to Spanish when needed. Additionally, it separates component data into dedicated Data files when appropriate.
 
 ## Response Format
 
@@ -14,11 +14,13 @@ The enhanced component should:
 - Translate any English text content inside JSX tags to Spanish
 - Maintain the component's original functionality
 - Use proper React patterns according to Next.js 15 best practices
+- When applicable, extract component data into a separate ComponentNameData.tsx file
 
 For each component, provide:
 
 1. An explanation of the changes made (in English)
 2. The enhanced component code (formatted according to ESLint rules)
+3. If applicable, the separate data file code
 
 ## Warnings
 
@@ -42,6 +44,111 @@ This enhancement tool is for a Next.js 15 project with TypeScript that uses:
 - ESLint for code formatting
 - JSDoc documentation in Spanish
 - Various UI libraries and styled components
+
+## Data Separation Guidelines
+
+When a component includes static data such as lists, configuration objects, or mock data that is used within the component:
+
+1. Create a separate file named `ComponentNameData.tsx` in the same directory as the component
+2. Move all static data to this file
+3. Export the data with proper TypeScript interfaces or types
+4. Import the data in the main component file
+5. Follow the pattern shown in `SocialMedia.tsx` and `SocialMediaData.tsx`
+
+### Example of Data Separation
+
+#### Original Component with Embedded Data:
+
+```tsx
+const FeatureList = () => {
+  const features = [
+    { id: 1, title: 'Fast Shipping', description: 'Get your items quickly' },
+    {
+      id: 2,
+      title: 'Secure Payment',
+      description: 'Safe transaction guaranteed',
+    },
+    { id: 3, title: 'Quality Products', description: 'Only the best for you' },
+  ]
+
+  return (
+    <div className="features">
+      {features.map((feature) => (
+        <div key={feature.id} className="feature-item">
+          <h3>{feature.title}</h3>
+          <p>{feature.description}</p>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+export default FeatureList
+```
+
+#### Enhanced with Data Separation:
+
+FeatureList.tsx:
+
+```tsx
+import { features } from './FeatureListData'
+
+/**
+ * Componente `FeatureList`
+ *
+ * Muestra una lista de características destacadas del servicio.
+ *
+ * @returns {JSX.Element} Lista de características renderizada.
+ */
+const FeatureList: React.FC = () => {
+  return (
+    <div className="features">
+      {features.map((feature) => (
+        <div key={feature.id} className="feature-item">
+          <h3>{feature.title}</h3>
+          <p>{feature.description}</p>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+export default FeatureList
+```
+
+FeatureListData.tsx:
+
+```tsx
+/**
+ * Interfaz para definir la estructura de una característica.
+ */
+export interface Feature {
+  id: number
+  title: string
+  description: string
+}
+
+/**
+ * Lista de características destacadas del servicio.
+ */
+export const features: Feature[] = [
+  {
+    id: 1,
+    title: 'Envío Rápido',
+    description: 'Recibe tus artículos rápidamente',
+  },
+  {
+    id: 2,
+    title: 'Pago Seguro',
+    description: 'Transacción segura garantizada',
+  },
+  {
+    id: 3,
+    title: 'Productos de Calidad',
+    description: 'Solo lo mejor para ti',
+  },
+]
+```
 
 ## Example Input
 
@@ -105,6 +212,94 @@ const ProductCard: React.FC = () => {
 export default ProductCard
 ```
 
+## Example with Data Separation
+
+### Input Component with Data
+
+```tsx
+const TeamMembers = () => {
+  const team = [
+    { id: 1, name: 'John Doe', role: 'CEO', avatar: '/avatars/john.png' },
+    { id: 2, name: 'Jane Smith', role: 'CTO', avatar: '/avatars/jane.png' },
+    {
+      id: 3,
+      name: 'Bob Johnson',
+      role: 'Designer',
+      avatar: '/avatars/bob.png',
+    },
+  ]
+
+  return (
+    <div className="team-grid">
+      {team.map((member) => (
+        <div key={member.id} className="team-member">
+          <img src={member.avatar} alt={member.name} />
+          <h4>{member.name}</h4>
+          <p>{member.role}</p>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+export default TeamMembers
+```
+
+### Output Components
+
+TeamMembers.tsx:
+
+```tsx
+import { team } from './TeamMembersData'
+
+/**
+ * Componente `TeamMembers`
+ *
+ * Muestra una cuadrícula con los miembros del equipo, incluyendo
+ * su avatar, nombre y cargo en la empresa.
+ *
+ * @returns {JSX.Element} Cuadrícula con los miembros del equipo.
+ */
+const TeamMembers: React.FC = () => {
+  return (
+    <div className="team-grid">
+      {team.map((member) => (
+        <div key={member.id} className="team-member">
+          <img src={member.avatar} alt={member.name} />
+          <h4>{member.name}</h4>
+          <p>{member.role}</p>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+export default TeamMembers
+```
+
+TeamMembersData.tsx:
+
+```tsx
+/**
+ * Interfaz que define la estructura de un miembro del equipo.
+ */
+export interface TeamMember {
+  id: number
+  name: string
+  role: string
+  avatar: string
+}
+
+/**
+ * Datos de los miembros del equipo.
+ */
+export const team: TeamMember[] = [
+  { id: 1, name: 'John Doe', role: 'CEO', avatar: '/avatars/john.png' },
+  { id: 2, name: 'Jane Smith', role: 'CTO', avatar: '/avatars/jane.png' },
+  { id: 3, name: 'Bob Johnson', role: 'Diseñador', avatar: '/avatars/bob.png' },
+]
+```
+
 ## Instructions for Component Enhancement
 
 When enhancing a React component:
@@ -150,21 +345,33 @@ When enhancing a React component:
      }
      ```
 
-4. **Code Formatting**:
+4. **Data Separation**:
+
+   - Identify and extract static data like arrays, objects, configurations, etc.
+   - Create a new file named `ComponentNameData.tsx` in the same directory
+   - Define appropriate TypeScript interfaces for all data structures
+   - Document all interfaces and data with JSDoc comments in Spanish
+   - Export the data with proper typing
+   - Import the data in the main component file
+   - Translate any text content in the data to Spanish when appropriate
+   - Only extract truly static data – leave dynamic state or computed values in the main component
+
+5. **Code Formatting**:
 
    - Apply consistent indentation (2 spaces)
    - Use single quotes for strings
    - Apply appropriate spacing between elements
    - Follow ESLint rules for line length, spacing, etc.
 
-5. **Translation Guidelines**:
+6. **Translation Guidelines**:
 
    - Translate all user-facing text inside JSX tags to Spanish
+   - Translate user-facing text in data files to Spanish
    - Maintain the meaning and tone of the original content
    - Preserve any technical terms that should not be translated
    - Do not translate props names, variables, or function names
 
-6. **Component Structure**:
+7. **Component Structure**:
    - Maintain separation of concerns
    - Keep the component's original functionality
    - Preserve existing styling and className attributes
