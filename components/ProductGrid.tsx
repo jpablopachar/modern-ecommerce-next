@@ -7,8 +7,9 @@ import { AnimatePresence, motion } from 'motion/react'
 import React, { useEffect, useState } from 'react'
 
 import { productTypes } from '@/constants'
-import { PRODUCTS_QUERYResult } from '@/sanity.types'
 import { client } from '@/sanity/lib/client'
+
+import { PRODUCTS_QUERYResult } from '@/sanity.types'
 
 import HomeTab from './new/HomeTab'
 

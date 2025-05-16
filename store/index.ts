@@ -29,6 +29,7 @@ interface CartItem {
 interface CartStoreHook {
   items: CartItem[]
   addItem: (product: Product) => void
+  getItemCount: (productId: string) => number
 }
 
 /**
@@ -55,10 +56,15 @@ interface CartStoreHook {
  */
 const useCartStore = create<CartStoreHook>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       items: [],
       addItem: (product) =>
         set((state) => ({ items: [...state.items, { product, quantity: 1 }] })),
+      getItemCount: (productId) => {
+        const item = get().items.find((currentItem) => currentItem.product._id === productId)
+
+        return item ? item.quantity : 0
+      },
     }),
     { name: 'cart-store' },
   ),
