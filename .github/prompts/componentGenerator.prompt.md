@@ -90,6 +90,8 @@ export default ProfileCard
 ### Output:
 
 ```tsx
+'use client'
+
 /**
  * Propiedades para el componente ProfileHeader.
  */
@@ -185,6 +187,8 @@ export default FeatureList
 FeatureList.tsx:
 
 ```tsx
+'use client'
+
 import { features } from './FeatureListData'
 
 /**
@@ -247,6 +251,8 @@ export const features: Feature[] = [
 ## Example Based on FooterTop.tsx Pattern
 
 ```tsx
+'use client'
+
 import { contactItems } from './FooterTopData'
 
 /**
