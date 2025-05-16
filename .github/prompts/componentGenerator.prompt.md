@@ -16,12 +16,14 @@ The enhanced component should:
 - Use proper React patterns according to Next.js 15 best practices
 - When applicable, extract component data into a separate ComponentNameData.tsx file
 - Position internal component definitions and their interfaces before the main component
+- Extract business logic to custom hooks when it exceeds 35 lines of code
 
 For each component, provide:
 
 1. An explanation of the changes made (in English)
 2. The enhanced component code (formatted according to ESLint rules)
 3. If applicable, the separate data file code
+4. If applicable, the custom hook file code
 
 ## Warnings
 
@@ -110,92 +112,100 @@ When documenting components:
  */
 ```
 
-## Example of Component with Internal Subcomponent
+## Custom Hook Guidelines
 
-### Input:
+When a component contains business logic that exceeds 35 lines of code, extract it to a custom hook:
+
+1. Create a new file named `useComponentName.ts` in the same directory as the component
+2. Move all business logic, state management, and data fetching to the hook
+3. Define a clear interface for the hook's return value
+4. Document the hook and its interface with JSDoc comments in Spanish
+5. Update the component to use the custom hook
+6. Follow the pattern shown in `useSearchBar.ts` and `SearchBar.tsx`
+
+### Custom Hook Interface Documentation
 
 ```tsx
-const ProfileCard = () => {
-  const ProfileHeader = ({ name, title }) => {
-    return (
-      <div className="header">
-        <h2>{name}</h2>
-        <p>{title}</p>
-      </div>
-    )
-  }
-
-  return (
-    <div className="profile-card">
-      <ProfileHeader name="John Doe" title="Software Engineer" />
-      <div className="body">
-        <p>Experienced developer with 5 years of experience.</p>
-      </div>
-    </div>
-  )
+/**
+ * Interfaz `ComponentNameHook`
+ *
+ * Define la estructura del hook personalizado para el componente ComponentName,
+ * gestionando su estado y lógica de negocio.
+ *
+ * @property {Type} propertyName - Descripción de la propiedad.
+ * @property {(value: Type) => void} setPropertyName - Función para actualizar la propiedad.
+ * @property {boolean} isLoading - Indica si hay operaciones en proceso.
+ */
+interface ComponentNameHook {
+  propertyName: Type
+  setPropertyName: (value: Type) => void
+  isLoading: boolean
 }
-
-export default ProfileCard
 ```
 
-### Output:
+### Custom Hook Documentation
 
 ```tsx
-'use client'
-
 /**
- * Propiedades para el componente ProfileHeader.
- * @property {string} name - Nombre a mostrar en el encabezado.
- * @property {string} title - Título o cargo profesional.
+ * Hook personalizado `useComponentName`
+ *
+ * Proporciona la lógica de negocio y gestión de estado para el componente ComponentName.
+ * [Descripción detallada de lo que hace el hook]
+ *
+ * @returns {ComponentNameHook} Un objeto que contiene las siguientes propiedades:
+ * - `propertyName`: [Descripción de la propiedad]
+ * - `setPropertyName`: [Descripción de la función]
+ * - `isLoading`: [Descripción del estado de carga]
  */
-interface ProfileHeaderProps {
-  name: string
-  title: string
+const useComponentName = (): ComponentNameHook => {
+  // Implementation...
+}
+```
+
+### Example Based on useSearchBar.ts
+
+```typescript
+/**
+ * Interfaz `SearchBarHook`
+ *
+ * Define la estructura del hook personalizado para la barra de
+ * búsqueda, gestionando el estado de la búsqueda, los productos
+ * filtrados y la visibilidad del componente de búsqueda.
+ *
+ * @property {string} search - Texto actual ingresado en la barra de búsqueda.
+ * @property {(search: string) => void} setSearch - Función para actualizar el valor de búsqueda.
+ * @property {Product[]} products - Lista de productos filtrados según el término de búsqueda.
+ * @property {boolean} loading - Indica si la búsqueda o filtrado de productos está en proceso.
+ * @property {boolean} showSearch - Indica si la barra de búsqueda está visible.
+ * @property {(showSearch: boolean) => void} setShowSearch - Función para mostrar u ocultar la barra de búsqueda.
+ */
+interface SearchBarHook {
+  search: string
+  setSearch: (search: string) => void
+  products: Product[]
+  loading: boolean
+  showSearch: boolean
+  setShowSearch: (showSearch: boolean) => void
 }
 
 /**
- * Componente `ProfileHeader`
+ * Hook personalizado `useSearchBar`
  *
- * Muestra el encabezado de una tarjeta de perfil con nombre y título profesional.
- * Este componente se utiliza internamente dentro de ProfileCard.
+ * Proporciona funcionalidad de búsqueda de productos con manejo de estado.
+ * Gestiona el término de búsqueda, los resultados de productos, estados de carga
+ * y la visibilidad del diálogo de búsqueda.
  *
- * @param {ProfileHeaderProps} props - Propiedades del componente
- * @param {string} props.name - Nombre a mostrar en el encabezado
- * @param {string} props.title - Título o cargo profesional
- * @returns {JSX.Element} Encabezado de la tarjeta de perfil
+ * @returns {SearchBarHook} Un objeto que contiene las siguientes propiedades:
+ * - `search`: El término de búsqueda actual.
+ * - `setSearch`: Función para actualizar el término de búsqueda.
+ * - `products`: Lista de productos encontrados.
+ * - `loading`: Indica si la búsqueda está en progreso.
+ * - `showSearch`: Estado de visibilidad del diálogo de búsqueda.
+ * - `setShowSearch`: Función para actualizar la visibilidad del diálogo.
  */
-const ProfileHeader: React.FC<ProfileHeaderProps> = ({ name, title }) => {
-  return (
-    <div className="header">
-      <h2>{name}</h2>
-      <p>{title}</p>
-    </div>
-  )
+const useSearchBar = (): SearchBarHook => {
+  // Implementation...
 }
-
-/**
- * Componente `ProfileCard`
- *
- * Muestra una tarjeta de perfil profesional con encabezado y cuerpo
- * que presenta información sobre una persona.
- *
- * @returns {JSX.Element} Tarjeta de perfil completa
- *
- * @example
- * <ProfileCard />
- */
-const ProfileCard: React.FC = () => {
-  return (
-    <div className="profile-card">
-      <ProfileHeader name="John Doe" title="Ingeniero de Software" />
-      <div className="body">
-        <p>Desarrollador experimentado con 5 años de experiencia.</p>
-      </div>
-    </div>
-  )
-}
-
-export default ProfileCard
 ```
 
 ## Example Based on Container.tsx
@@ -430,107 +440,204 @@ const FooterTop: React.FC = () => {
 export default FooterTop
 ```
 
-## Example Input
+## Example with Component and Custom Hook
+
+### Complex Component Before Enhancement:
 
 ```tsx
-const ProductCard = () => {
-  return (
-    <div className="product-card">
-      <h3>Featured Product</h3>
-      <p>This is an awesome product you should buy.</p>
-      <button onClick={() => handleAddToCart(product)}>Add to cart</button>
-    </div>
-  )
-}
+const ProductSearch = () => {
+  // Business logic (over 35 lines)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [products, setProducts] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [categories, setCategories] = useState([])
+  const [selectedCategory, setSelectedCategory] = useState(null)
 
-export default ProductCard
-```
+  // Fetch products method
+  const fetchProducts = useCallback(async () => {
+    if (!searchTerm) return
 
-## Example Output
+    setIsLoading(true)
+    try {
+      // API call to fetch products based on search term and category
+      const data = await fetch(
+        `/api/products?search=${searchTerm}&category=${selectedCategory?.id || ''}`,
+      )
+      const response = await data.json()
+      setProducts(response)
+    } catch (error) {
+      console.error('Error fetching products', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [searchTerm, selectedCategory])
 
-```tsx
-'use client'
-
-/**
- * Componente `ProductCard`
- *
- * Muestra una tarjeta de producto destacado con título, descripción y botón
- * para añadir al carrito de compras.
- *
- * @returns {JSX.Element} Elemento JSX que representa una tarjeta de producto
- *
- * @example
- * <ProductCard />
- */
-const ProductCard: React.FC = () => {
-  /**
-   * Maneja la acción de añadir un producto al carrito.
-   *
-   * Realiza una solicitud al servidor para agregar el producto seleccionado
-   * al carrito de compras del usuario actual.
-   *
-   * @param {Product} product - El producto que se va a añadir al carrito
-   * @returns {void}
-   */
-  const handleAddToCart = (product: Product): void => {
-    // Implementation
+  // Fetch categories method
+  const fetchCategories = async () => {
+    try {
+      const data = await fetch('/api/categories')
+      const response = await data.json()
+      setCategories(response)
+    } catch (error) {
+      console.error('Error fetching categories', error)
+    }
   }
 
+  // Clear filters method
+  const clearFilters = () => {
+    setSearchTerm('')
+    setSelectedCategory(null)
+  }
+
+  // Initialize categories
+  useEffect(() => {
+    fetchCategories()
+  }, [])
+
+  // Fetch products when search term or category changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchProducts()
+    }, 300)
+
+    return () => clearTimeout(timer)
+  }, [searchTerm, selectedCategory, fetchProducts])
+
+  // Render component
   return (
-    <div className="product-card">
-      <h3>Producto Destacado</h3>
-      <p>Este es un producto increíble que deberías comprar.</p>
-      <button onClick={() => handleAddToCart(product)}>
-        Añadir al carrito
-      </button>
+    <div>
+      <h2>Product Search</h2>
+      <input
+        type="text"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        placeholder="Search products"
+      />
+      <select
+        value={selectedCategory?.id || ''}
+        onChange={(e) => {
+          const category = categories.find((cat) => cat.id === e.target.value)
+          setSelectedCategory(category || null)
+        }}
+      >
+        <option value="">All Categories</option>
+        {categories.map((category) => (
+          <option key={category.id} value={category.id}>
+            {category.name}
+          </option>
+        ))}
+      </select>
+      <button onClick={clearFilters}>Clear Filters</button>
+
+      {isLoading ? (
+        <p>Loading products...</p>
+      ) : (
+        <div className="product-grid">
+          {products.map((product) => (
+            <div key={product.id} className="product-card">
+              <h3>{product.name}</h3>
+              <p>{product.price}</p>
+              <button>Add to Cart</button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
 
-export default ProductCard
+export default ProductSearch
 ```
 
-## Example Based on AddToCartButton Pattern
+### Enhanced with Custom Hook (useProductSearch.ts):
+
+```tsx
+/**
+ * Interfaz `ProductSearchHook`
+ *
+ * Define la estructura del hook personalizado para la búsqueda de productos,
+ * gestionando los términos de búsqueda, categorías, resultados y estados de carga.
+ *
+ * @property {string} searchTerm - Término de búsqueda actual.
+ * @property {(term: string) => void} setSearchTerm - Función para actualizar el término de búsqueda.
+ * @property {Product[]} products - Lista de productos filtrados según los criterios.
+ * @property {boolean} isLoading - Indica si hay una búsqueda en proceso.
+ * @property {Category[]} categories - Lista de categorías disponibles.
+ * @property {Category|null} selectedCategory - Categoría seleccionada actualmente.
+ * @property {(category: Category|null) => void} setSelectedCategory - Función para seleccionar una categoría.
+ * @property {() => void} clearFilters - Función para limpiar todos los filtros aplicados.
+ */
+interface ProductSearchHook {
+  searchTerm: string
+  setSearchTerm: (term: string) => void
+  products: Product[]
+  isLoading: boolean
+  categories: Category[]
+  selectedCategory: Category | null
+  setSelectedCategory: (category: Category | null) => void
+  clearFilters: () => void
+}
+
+/**
+ * Hook personalizado `useProductSearch`
+ *
+ * Proporciona la funcionalidad para buscar productos por término y categoría,
+ * gestionando el estado de la búsqueda, resultados y filtros.
+ *
+ * @returns {ProductSearchHook} Un objeto que contiene las siguientes propiedades:
+ * - `searchTerm`: El término de búsqueda actual.
+ * - `setSearchTerm`: Función para actualizar el término de búsqueda.
+ * - `products`: Lista de productos que coinciden con los criterios de búsqueda.
+ * - `isLoading`: Indica si hay una búsqueda en proceso.
+ * - `categories`: Lista de categorías disponibles.
+ * - `selectedCategory`: Categoría seleccionada actualmente.
+ * - `setSelectedCategory`: Función para seleccionar una categoría.
+ * - `clearFilters`: Función para limpiar todos los filtros de búsqueda.
+ */
+const useProductSearch = (): ProductSearchHook => {
+  // Implementation...
+}
+```
+
+### Enhanced Component (ProductSearch.tsx):
 
 ```tsx
 'use client'
 
-/**
- * Propiedades para el componente AddToCartButton.
- * @property {Product} product - El producto que se agregará al carrito.
- * @property {string} [className] - Clase CSS opcional para personalizar el estilo del botón.
- */
-interface AddToCartButtonProps {
-  product: Product
-  className?: string
-}
+import useProductSearch from './useProductSearch'
 
 /**
- * Componente `AddToCartButton`
+ * Componente `ProductSearch`
  *
- * Muestra un botón para agregar productos al carrito o controles de cantidad
- * si el producto ya está en el carrito. Incluye información de subtotal cuando
- * hay productos agregados.
+ * Proporciona una interfaz para buscar y filtrar productos por términos de búsqueda
+ * y categorías. Muestra los resultados en una cuadrícula responsiva.
  *
- * @param {AddToCartButtonProps} props - Propiedades del componente
- * @param {Product} props.product - El producto que se agregará al carrito
- * @param {string} [props.className] - Clase CSS opcional para personalizar el estilo del botón
- * @returns {JSX.Element | null} Botón o controles de cantidad del producto
+ * @returns {JSX.Element} Interfaz de búsqueda de productos con resultados
  *
  * @example
- * <AddToCartButton
- *   product={productData}
- *   className="w-full bg-primary"
- * />
+ * <ProductSearch />
  */
-const AddToCartButton: React.FC<AddToCartButtonProps> = ({
-  product,
-  className,
-}) => {
-  // Component implementation
+const ProductSearch: React.FC = () => {
+  const {
+    searchTerm,
+    setSearchTerm,
+    products,
+    isLoading,
+    categories,
+    selectedCategory,
+    setSelectedCategory,
+    clearFilters,
+  } = useProductSearch()
+
+  return (
+    <div>
+      <h2>Búsqueda de Productos</h2>
+      {/* Rest of the component with UI only */}
+    </div>
+  )
 }
 
-export default AddToCartButton
+export default ProductSearch
 ```
 
 ## Instructions for Component Enhancement
@@ -593,7 +700,18 @@ When enhancing a React component:
      }
      ```
 
-5. **Data Separation**:
+5. **Business Logic Extraction**:
+
+   - When a component contains business logic (state management, data fetching, calculations, effects) that exceeds 35 lines, extract it to a custom hook
+   - Create a new file named `useComponentName.ts` in the same directory
+   - Define an interface for the hook's return value
+   - Move all business logic to the hook
+   - Keep only UI rendering and simple event handling in the component
+   - Document the hook and its interface with JSDoc comments in Spanish
+   - Update the component to use the custom hook
+   - Follow the pattern shown in `useSearchBar.ts` and similar examples
+
+6. **Data Separation**:
 
    - Identify and extract static data like arrays, objects, configurations, etc.
    - Create a new file named `ComponentNameData.tsx` in the same directory
@@ -604,14 +722,14 @@ When enhancing a React component:
    - Translate any text content in the data to Spanish when appropriate
    - Only extract truly static data – leave dynamic state or computed values in the main component
 
-6. **Code Formatting**:
+7. **Code Formatting**:
 
    - Apply consistent indentation (2 spaces)
    - Use single quotes for strings
    - Apply appropriate spacing between elements
    - Follow ESLint rules for line length, spacing, etc.
 
-7. **Translation Guidelines**:
+8. **Translation Guidelines**:
 
    - Translate all user-facing text inside JSX tags to Spanish
    - Translate user-facing text in data files to Spanish
